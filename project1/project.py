@@ -24,9 +24,9 @@ if len(sys.argv) > 1:
 else:
     img = takeImageFromCamera()
 r = img.copy()
-r[:, :, 0] = 0
 r[:, :, 1] = 0
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+r[:, :, 0] = 0
+gray = cv2.cvtColor(r, cv2.COLOR_BGR2GRAY)
 circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100)
 circles = np.uint16(np.around(circles))
 for i in circles[0,:]:
