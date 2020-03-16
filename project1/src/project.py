@@ -25,7 +25,7 @@ def drawCircles(img, circles):
 
 
 img = acquireImage()
-circles, img = detectCircles(img, 'red')
+circles, _ = detectCircles(img, 'blue')
 # img = detectTriangles(img)
 # img = detectRectangles(img)
 # img = detectStop(img)
