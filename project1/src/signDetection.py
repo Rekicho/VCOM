@@ -17,6 +17,7 @@ def detectCircles(img, color):
     gray = cv2.dilate(gray,kernel,iterations = 1)
     gray = cv2.erode(gray,kernel,iterations = 1)
     circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100, param1=50, param2=30, minRadius=50, maxRadius=250)
+    centers = []
     if circles is not None:
         circles = np.uint16(np.around(circles))
         centers = []

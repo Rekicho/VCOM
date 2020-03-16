@@ -55,8 +55,8 @@ def printLabels(img, obj):
 
 # Print on top 'img' all the shapes in 'obj'
 def printShapes(img, obj):
-    print(obj["text"])
-    if obj["text"] == "RC":
+    text = obj["text"]
+    if text == "RC" or text == 'BC':
         img = drawCircles(img, obj["info"])
     return img
 
@@ -69,14 +69,27 @@ answer = {}
 
 img = acquireImage()
 
-circlesInfo, img2, centers = detectCircles(img, 'red')
+circlesInfo, debug, centers = detectCircles(img, 'red')
 circlesObj = {
     "info": circlesInfo,
-    "debugImg": img2,
+    "debugImg": debug,
     "coordText": centers,
     "text": "RC"
 }
 answer["redCircles"] = circlesObj
+
+circlesInfo2, img2, centers2 = detectCircles(img, 'blue')
+circlesObj2 = {
+    "info": circlesInfo2,
+    "debugImg": img2,
+    "coordText": centers2,
+    "text": "BC"
+}
+answer["blueCircles"] = circlesObj2
+
+
+
+
 # Line thickness of 2 px 
 
 
