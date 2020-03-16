@@ -69,23 +69,26 @@ answer = {}
 
 img = acquireImage()
 
-circlesInfo, debug, centers = detectCircles(img, 'red')
-circlesObj = {
-    "info": circlesInfo,
-    "debugImg": debug,
-    "coordText": centers,
-    "text": "RC"
-}
-answer["redCircles"] = circlesObj
+circlesInfo, debug, centers = detectCircles(img, "red")
+# print(circlesInfo)
+if circlesInfo is not None:
+    circlesObj = {
+        "info": circlesInfo,
+        "debugImg": debug,
+        "coordText": centers,
+        "text": "RC"
+    }
+    answer["redCircles"] = circlesObj
 
-circlesInfo2, img2, centers2 = detectCircles(img, 'blue')
-circlesObj2 = {
-    "info": circlesInfo2,
-    "debugImg": img2,
-    "coordText": centers2,
-    "text": "BC"
-}
-answer["blueCircles"] = circlesObj2
+circlesInfo2, img2, centers2 = detectCircles(img, "blue")
+if circlesInfo2 is not None:
+    circlesObj2 = {
+        "info": circlesInfo2,
+        "debugImg": img2,
+        "coordText": centers2,
+        "text": "BC"
+    }
+    answer["blueCircles"] = circlesObj2
 
 
 
