@@ -24,7 +24,7 @@ def detectCircles(img, color):
             center = (i[0],i[1])
             centers.append(center)
 
-    return circles, img, centers
+    return circles, gray, centers
 
 def detectTriangles(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

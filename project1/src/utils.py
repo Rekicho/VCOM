@@ -60,8 +60,8 @@ HSV_RANGES = {
     # blue is a major color
     'blue': [
         {
-            'lower': np.array([101, 39, 64]),
-            'upper': np.array([140, 255, 255])
+            'lower': np.array([100, 200, 64]),
+            'upper': np.array([141, 255, 255])
         }
     ],
     # violet is a minor color

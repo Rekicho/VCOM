@@ -80,6 +80,7 @@ answer["redCircles"] = circlesObj
 # Line thickness of 2 px 
 
 
+# circles, _ = detectCircles(img, 'blue')
 # img = detectTriangles(img)
 # img = detectRectangles(img)
 # img = detectStop(img)
