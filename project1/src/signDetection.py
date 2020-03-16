@@ -17,9 +17,14 @@ def detectCircles(img, color):
     gray = cv2.dilate(gray,kernel,iterations = 1)
     gray = cv2.erode(gray,kernel,iterations = 1)
     circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100, param1=50, param2=30, minRadius=50, maxRadius=250)
-    if not(circles is None):
+    if circles is not None:
         circles = np.uint16(np.around(circles))
-    return circles, img
+        centers = []
+        for i in circles[0,:]:
+            center = (i[0],i[1])
+            centers.append(center)
+
+    return circles, img, centers
 
 def detectTriangles(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
