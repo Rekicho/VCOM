@@ -20,6 +20,12 @@ def drawCircles(img, circles):
 def drawTriangles(img, triangles):
     for triangle in triangles:
         cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
+    return img
+
+def drawRectangles(img, rectangles):
+    for rectangle in rectangles:
+        cv2.drawContours(img, rectangles, 0, (255, 0, 0), -1)
+    return img
 
     # Print on top of 'img' all the labels in 'obj'
 def printLabels(img, obj):
@@ -46,6 +52,8 @@ def printShapes(img, obj):
         img = drawCircles(img, obj["info"])
     elif text == "T":
         img = drawTriangles(img, obj["info"])
+    elif text == "R":
+        img = drawRectangles(img, obj["info"])
     return img
 
 class Printer:
