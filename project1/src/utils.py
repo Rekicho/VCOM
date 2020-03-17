@@ -3,20 +3,7 @@ import numpy as np
 
 FPS = 60
 
-def openImage(name):
-    return cv2.imread(name,cv2.IMREAD_COLOR)
 
-def takeImageFromCamera():
-    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    while(True):
-        ret, frame = cap.read()
-        img = frame
-        cv2.imshow('Camera',img)
-        if cv2.waitKey(int(1000/FPS)) != -1:
-            break
-    cap.release()
-    cv2.destroyAllWindows()
-    return img
 
 def convertToHSV(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
