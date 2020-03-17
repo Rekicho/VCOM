@@ -19,6 +19,7 @@ img = reader.getImage()
 det = Detector(img)
 det.detectCircles("red")
 det.detectCircles("blue")
+# det.detectTriangles()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image
