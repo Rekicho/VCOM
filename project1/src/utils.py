@@ -11,6 +11,12 @@ def convertToHSV(img):
 def convertToRGB(img):
     return cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
 
+RBG_PURE_COLOR = {
+    "red": [0,0,255],
+    "blue": [255,0,0],
+    "yellow": [0, 255, 255]
+}
+
 HSV_RANGES = {
     # red is a major color
     'red': [
@@ -107,4 +113,11 @@ def removeAllButOneColor(img, color):
     red_mask = create_mask(img, [color])
     mask_img = cv2.bitwise_and(img, img, mask=red_mask)
     mask_img = convertToRGB(mask_img)
+    print(mask_img[50][50])
+    h = mask_img.shape[0]
+    w = mask_img.shape[1]
+    for y in range(0, h):
+        for x in range(0, w):
+            if mask_img[y][x][0] != 0 or mask_img[y][x][1] != 0 or mask_img[y][x][2] != 0:
+                mask_img[y][x] = RBG_PURE_COLOR[color]
     return mask_img
