@@ -20,8 +20,10 @@ det = Detector(img)
 # det.detectCircles("red")
 # det.detectCircles("blue")
 det.isolateEachElementOfColor("red")
+det.isolateEachElementOfColor("blue")
 # det.detectTriangles()
 # det.detectRectangles()
+det.printProcess()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image

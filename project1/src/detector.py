@@ -8,7 +8,12 @@ from utils import *
 class Detector:
     def __init__(self, img):
         self.img = img
+        h = img.shape[0]
+        w = img.shape[1]
         self.detected = {}
+        self.processedImgHSV = np.zeros([h,w,3], dtype=np.uint8)
+        self.redProcessed = None
+        self.blueProcessed = None
 
     def getDetected(self):
         return self.detected
@@ -50,16 +55,41 @@ class Detector:
                     frame = cv2.dilate(frame,kernel,iterations = 1)
                     # self.print2(frame)
                     singleSign = frame[y_offset:y_offset+h, x_offset:x_offset+w]
-                    # self.print2(singleSign)
                     everySign.append(singleSign)
                     cv2.floodFill(img, None, (x,y),(0,0,0))
-        finalImg = np.zeros([h,w,3], dtype=np.uint8)
+        finalImgHSV = np.zeros([h,w,3], dtype=np.uint8)
         for singleSign in everySign:
             img = convertToHSV(singleSign)
             yellow_mask = create_mask(img, ["yellow"])
-            cv2.bitwise_or(finalImg, img, finalImg, mask=yellow_mask)
-            self.print2(convertToRGB(finalImg))
-        # self.print2(img)
+            cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=yellow_mask)
+            # self.print2(convertToRGB(finalImg))
+        
+        # self.print2(finalImg)
+        myMask = create_mask(finalImgHSV, ["yellow"])
+        # self.print2(myMask)
+        # self.print2(self.processedImg)
+        # self.print2(self.processedImgHSV)
+        # cv2.bitwise_or(finalImgHSV, self.processedImgHSV, finalImgHSV, mask=myMask)
+        # self.print2(finalImgHSV)
+        #self.print2(result)
+        finalImg = convertToRGB(finalImgHSV)
+        
+        # self.print2(finalImg)
+        finalImg[np.where((finalImg==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
+        #self.processedImgHSV = finalImg.copy()
+        self.print2(finalImg)
+
+        if color == "red":
+            self.redProcessed = finalImg.copy()
+        else:
+            self.blueProcessed = finalImg.copy()
+        #self.print2(self.processedImg)
+
+    def printProcess(self):
+        self.print2(self.blueProcessed)
+        self.print2(self.redProcessed)
+        temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
+        self.print2(temp)
 
 
     def detectCircles(self, color):
