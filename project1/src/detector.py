@@ -85,7 +85,47 @@ class Detector:
                 "info": circles,
                 "debugImg": gray,
                 "coordText": centers,
-                "text": color
+                "text": color + "C"
             }
-            self.detected[color] = circlesObj
+            self.detected["c-" + color] = circlesObj
         return circles, gray, centers
+
+    def detectTriangles(self):
+        img = self.img
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(gray, 127, 255, 1)
+        contours, h = cv2.findContours(thresh, 1, 2)
+        triangles = []
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+            if len(approx) == 3:
+                triangles.append([cnt])
+        trianglesObj = {
+            "info": contours,
+            "debugImg": thresh,
+            "coordText": triangles,
+            "text": "T"
+        }
+        self.detected["t"] = trianglesObj
+        return contours, thresh, triangles
+
+    def detectRectangles(self):
+        img = self.img
+        # img = removeAllButOneColor(img,"blue")
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(gray, 127, 255, 1)
+        contours, h = cv2.findContours(thresh, 1, 2)
+        rectangles = []
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+            if len(approx) == 4:
+                rectangles.append([cnt])
+        RectanglesObj = {
+            "info": contours,
+            "debugImg": thresh,
+            "coordText": rectangles,
+            "text": "R"
+        }
+        
+        self.detected["r"] = RectanglesObj
+        return contours, thresh, rectangles
