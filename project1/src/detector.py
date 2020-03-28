@@ -11,9 +11,9 @@ class Detector:
         h = img.shape[0]
         w = img.shape[1]
         self.detected = {}
-        self.processedImgHSV = np.zeros([h,w,3], dtype=np.uint8)
-        self.redProcessed = None
-        self.blueProcessed = None
+        self.processedImg = np.zeros([h,w,3], dtype=np.uint8)
+        self.redProcessed = np.zeros([h,w,3], dtype=np.uint8)
+        self.blueProcessed = np.zeros([h,w,3], dtype=np.uint8)
 
     def getDetected(self):
         return self.detected
@@ -77,20 +77,23 @@ class Detector:
         # self.print2(finalImg)
         finalImg[np.where((finalImg==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
         #self.processedImgHSV = finalImg.copy()
-        self.print2(finalImg)
+        # self.print2(finalImg)
 
         if color == "red":
             self.redProcessed = finalImg.copy()
         else:
             self.blueProcessed = finalImg.copy()
         #self.print2(self.processedImg)
+        #temp = cv2.bitwise_or(self.blueProcessed, self.blueProcessed)
+        #self.processedImg = temp
+        #self.print2(self.processedImg)
 
-    def printProcess(self):
-        self.print2(self.blueProcessed)
-        self.print2(self.redProcessed)
-        temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
-        self.print2(temp)
-
+    def process(self):
+        # self.print2(self.blueProcessed)
+        # self.print2(self.redProcessed)
+        temp = cv2.bitwise_and(self.blueProcessed, self.redProcessed)
+        self.processedImg = temp.copy()
+        self.print2(self.processedImg)
 
     def detectCircles(self, color):
         img = self.img

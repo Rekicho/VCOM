@@ -113,7 +113,7 @@ def removeAllButOneColor(img, color):
     red_mask = create_mask(img, [color])
     mask_img = cv2.bitwise_and(img, img, mask=red_mask)
     mask_img = convertToRGB(mask_img)
-    print(mask_img[50][50])
+    # print(mask_img[50][50])
     h = mask_img.shape[0]
     w = mask_img.shape[1]
     for y in range(0, h):

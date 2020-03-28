@@ -23,7 +23,8 @@ det.isolateEachElementOfColor("red")
 det.isolateEachElementOfColor("blue")
 # det.detectTriangles()
 # det.detectRectangles()
-det.printProcess()
+# det.printProcess()
+det.process()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image
