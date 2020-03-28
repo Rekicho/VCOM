@@ -29,11 +29,21 @@ class Detector:
 
     def isolateEachElementOfColor(self, color):
         img = removeAllButOneColor(self.img, color)
+        self.print2(img)
         everySign = []
         h = img.shape[0]
         w = img.shape[1]
+
+        kernel1 = np.ones((5,5),np.uint8)
+        img = cv2.dilate(img,kernel1,iterations = 1)
+        # self.print2(img)
+        img = cv2.erode(img,kernel1,iterations = 1)
+        kernel2 = np.ones((5,5),np.uint8)
+        img = cv2.erode(img,kernel2,iterations = 1)
+        img = cv2.dilate(img,kernel2,iterations = 1)
+        self.print2(img)
         
-        #self.print2(img)
+        
         for y in range(0, h):
             for x in range(0, w):
                 if img[y][x][0] == RBG_PURE_COLOR[color][0] and img[y][x][1] == RBG_PURE_COLOR[color][1] and img[y][x][2] == RBG_PURE_COLOR[color][2]:
@@ -46,14 +56,11 @@ class Detector:
                     frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
                     kernel = np.ones((50,50),np.uint8)
                     frame = cv2.dilate(frame,kernel,iterations = 1)
-                    frame = cv2.erode(frame,kernel,iterations = 1)
-
-                    kernel = np.ones((10,10),np.uint8)
-                    #self.print2(frame)
-                    frame = cv2.erode(frame,kernel,iterations = 1)
-                    #self.print2(frame)
-                    frame = cv2.dilate(frame,kernel,iterations = 1)
                     # self.print2(frame)
+                    frame = cv2.erode(frame,kernel,iterations = 1)
+                    # kernel = np.ones((10,10),np.uint8)
+                    # frame = cv2.erode(frame,kernel,iterations = 1)
+                    # frame = cv2.dilate(frame,kernel,iterations = 1)
                     singleSign = frame[y_offset:y_offset+h, x_offset:x_offset+w]
                     everySign.append(singleSign)
                     cv2.floodFill(img, None, (x,y),(0,0,0))
@@ -62,36 +69,20 @@ class Detector:
             img = convertToHSV(singleSign)
             yellow_mask = create_mask(img, ["yellow"])
             cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=yellow_mask)
-            # self.print2(convertToRGB(finalImg))
-        
-        # self.print2(finalImg)
+
         myMask = create_mask(finalImgHSV, ["yellow"])
-        # self.print2(myMask)
-        # self.print2(self.processedImg)
-        # self.print2(self.processedImgHSV)
-        # cv2.bitwise_or(finalImgHSV, self.processedImgHSV, finalImgHSV, mask=myMask)
-        # self.print2(finalImgHSV)
-        #self.print2(result)
         finalImg = convertToRGB(finalImgHSV)
-        
-        # self.print2(finalImg)
         finalImg[np.where((finalImg==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
-        #self.processedImgHSV = finalImg.copy()
-        # self.print2(finalImg)
 
         if color == "red":
             self.redProcessed = finalImg.copy()
         else:
             self.blueProcessed = finalImg.copy()
-        #self.print2(self.processedImg)
-        #temp = cv2.bitwise_or(self.blueProcessed, self.blueProcessed)
-        #self.processedImg = temp
-        #self.print2(self.processedImg)
 
     def process(self):
         # self.print2(self.blueProcessed)
         # self.print2(self.redProcessed)
-        temp = cv2.bitwise_and(self.blueProcessed, self.redProcessed)
+        temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
         self.processedImg = temp.copy()
         self.print2(self.processedImg)
 
