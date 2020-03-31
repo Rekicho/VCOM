@@ -38,12 +38,8 @@ def printLabels(img, obj):
     # Personalized for each shape
     textToPrint = obj["text"]
     coords = obj["coordText"]
-    if textToPrint == "redC" or textToPrint == 'blueC':
-        for coord in coords:
-            img = cv2.putText(img, textToPrint, coord, font, fontScale, color, thickness, cv2.LINE_AA)
-    # elif textToPrint == "T":
-        # for coord in coords:
-            # img = cv2.putText(img, textToPrint, coord[0], font, fontScale, color, thickness, cv2.LINE_AA)
+    for coord in coords:
+        img = cv2.putText(img, textToPrint, coord, font, fontScale, color, thickness, cv2.LINE_AA)
     return img
 
 def printShapes(img, obj):

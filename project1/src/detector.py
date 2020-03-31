@@ -120,14 +120,21 @@ class Detector:
         ret, thresh = cv2.threshold(gray, 127, 255, 1)
         contours, h = cv2.findContours(thresh, 1, 2)
         triangles = []
+        centers = []
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
             if len(approx) == 3:
+                triangle = [(approx[0][0][0],approx[0][0][1]),
+                            (approx[1][0][0],approx[1][0][1]),
+                            (approx[2][0][0],approx[2][0][1])]
+                center = (int(round((triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3)),
+                          int(round((triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3)))
+                centers.append(center)
                 triangles.append([cnt])
         trianglesObj = {
-            "info": contours,
+            "info": triangles,
             "debugImg": thresh,
-            "coordText": triangles,
+            "coordText": centers,
             "text": "T"
         }
         self.detected["t"] = trianglesObj
