@@ -19,7 +19,10 @@ def drawCircles(img, circles):
 
 def drawTriangles(img, triangles):
     for triangle in triangles:
-        cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
+        # cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
+        img = cv2.line(img, triangle[0], triangle[1], (0, 255, 0), 5)
+        img = cv2.line(img, triangle[0], triangle[2], (0, 255, 0), 5)
+        img = cv2.line(img, triangle[1], triangle[2], (0, 255, 0), 5)
     return img
 
 def drawRectangles(img, rectangles):

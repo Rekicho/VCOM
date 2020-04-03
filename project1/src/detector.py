@@ -114,8 +114,10 @@ class Detector:
             self.detected["c-" + color] = circlesObj
         return circles, gray, centers
 
-    def detectTriangles(self):
+    def detectTriangles(self, color):
         img = self.img
+        img = removeAllButOneColor(img,color)
+        cv2.imshow("White", img)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 127, 255, 1)
         contours, h = cv2.findContours(thresh, 1, 2)
@@ -129,8 +131,10 @@ class Detector:
                             (approx[2][0][0],approx[2][0][1])]
                 center = (int(round((triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3)),
                           int(round((triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3)))
-                centers.append(center)
-                triangles.append([cnt])
+                if calcArea(triangle) > 100:
+                    centers.append(center)
+                    triangles.append(triangle)
+                    # triangles.append([cnt])
         trianglesObj = {
             "info": triangles,
             "debugImg": thresh,

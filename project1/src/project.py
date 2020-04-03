@@ -17,14 +17,14 @@ img = reader.getImage()
 
 # Detect Point of Interests (POI)
 det = Detector(img)
-det.detectCircles("red")
-det.detectCircles("blue")
+# det.detectCircles("red")
+# det.detectCircles("blue")
 # det.isolateEachElementOfColor("red")
 # det.isolateEachElementOfColor("blue")
-det.detectTriangles()
+det.detectTriangles("white")
 # det.detectRectangles()
 # det.printProcess()
-det.process()
+# det.process()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image
