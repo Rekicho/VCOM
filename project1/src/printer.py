@@ -30,8 +30,8 @@ from utils import *
     # Print on top of 'img' all the labels in 'obj'
 def printLabels(img, obj):
     # Constants
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    fontScale = 1
+    font = cv2.FONT_HERSHEY_PLAIN
+    fontScale = 2
     color = (0, 255, 0)
     thickness = 2
 

@@ -15,6 +15,7 @@ from preprocessor import Preprocessor
 # Read the image
 reader = Reader()
 img = reader.getImage()
+original = img.copy()
 
 pre = Preprocessor(img)
 img = pre.getProcessed()
@@ -23,14 +24,15 @@ det = Detector(img)
 det.detectCircles("red")
 det.detectCircles("blue")
 det.detectTriangles("red")
-# det.detectRectangles()
+det.detectRectangles("blue")
+det.detectStop()
 # det.printProcess()
 # det.process()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image
-printer = Printer(img)
-img = printer.printAllIntoImage(ans)
+printer = Printer(original)
+original = printer.printAllIntoImage(ans)
 printer.showAndSave()
 
 # circles, _ = detectCircles(img, 'blue')

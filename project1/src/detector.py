@@ -75,7 +75,6 @@ class Detector:
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
             if len(approx) > 8:
-                print(approx[0][0])
                 centers.append((approx[0][0][0],approx[0][0][1]))
                 circles.append([cnt])
         circlesObj = {
@@ -84,7 +83,6 @@ class Detector:
             "coordText": centers,
             "text": "c-" + color
         }
-        # print(trianglesObj)
         self.detected["c-" + color] = circlesObj
         return contours, gray, circles
 
@@ -114,27 +112,49 @@ class Detector:
             "coordText": centers,
             "text": "T"
         }
-        # print(trianglesObj)
         self.detected["t"] = trianglesObj
         return contours, gray, triangles
 
-    def detectRectangles(self):
+    def detectRectangles(self, color):
         img = self.img
-        # img = removeAllButOneColor(img,"blue")
+        img = removeAllButOneColor(img,color)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(gray, 127, 255, 1)
-        contours, h = cv2.findContours(thresh, 1, 2)
+        ret, thresh = cv2.threshold(gray, 0, 255, 1)
+        contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
         rectangles = []
+        centers = []
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.04*cv2.arcLength(cnt, True), True)
+            if len(approx) == 4:
+                centers.append((approx[0][0][0],approx[0][0][1]))
+                rectangles.append([cnt])
+        rectanglesObj = {
+            "info": rectangles,
+            "debugImg": gray,
+            "coordText": centers,
+            "text": "r"
+        }
+        self.detected["r"] = rectanglesObj
+        return contours, gray, rectangles
+
+    def detectStop(self):
+        img = self.img
+        img = removeAllButOneColor(img,"red")
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(gray, 0, 255, 1)
+        contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
+        stops = []
+        centers = []
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
-            if len(approx) == 4:
-                rectangles.append([cnt])
-        RectanglesObj = {
-            "info": contours,
-            "debugImg": thresh,
-            "coordText": rectangles,
-            "text": "R"
+            if len(approx) == 8:
+                centers.append((approx[0][0][0],approx[0][0][1]))
+                stops.append([cnt])
+        stopsObj = {
+            "info": stops,
+            "debugImg": gray,
+            "coordText": centers,
+            "text": "STOP"
         }
-        
-        self.detected["r"] = RectanglesObj
-        return contours, thresh, rectangles
+        self.detected["STOP"] = stopsObj
+        return contours, gray, stops
