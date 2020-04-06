@@ -19,7 +19,10 @@ def drawCircles(img, circles):
 
 def drawTriangles(img, triangles):
     for triangle in triangles:
-        cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
+        # cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
+        img = cv2.line(img, triangle[0], triangle[1], (0, 255, 0), 5)
+        img = cv2.line(img, triangle[0], triangle[2], (0, 255, 0), 5)
+        img = cv2.line(img, triangle[1], triangle[2], (0, 255, 0), 5)
     return img
 
 def drawRectangles(img, rectangles):
@@ -38,12 +41,8 @@ def printLabels(img, obj):
     # Personalized for each shape
     textToPrint = obj["text"]
     coords = obj["coordText"]
-    if textToPrint == "redC" or textToPrint == 'blueC':
-        for coord in coords:
-            img = cv2.putText(img, textToPrint, coord, font, fontScale, color, thickness, cv2.LINE_AA)
-    # elif textToPrint == "T":
-        # for coord in coords:
-            # img = cv2.putText(img, textToPrint, coord[0], font, fontScale, color, thickness, cv2.LINE_AA)
+    for coord in coords:
+        img = cv2.putText(img, textToPrint, coord, font, fontScale, color, thickness, cv2.LINE_AA)
     return img
 
 def printShapes(img, obj):

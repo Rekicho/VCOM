@@ -14,7 +14,8 @@ def convertToRGB(img):
 RBG_PURE_COLOR = {
     "red": [0,0,255],
     "blue": [255,0,0],
-    "yellow": [0, 255, 255]
+    "yellow": [0, 255, 255],
+    "white": [255,255,255]
 }
 
 HSV_PURE_COLOR = {
@@ -88,7 +89,7 @@ HSV_RANGES = {
     # white is all H values, lower 15% of S, & upper 10% of V
     'white': [
         {
-            'lower': np.array([0, 0, 229]),
+            'lower': np.array([0, 0, 150]),
             'upper': np.array([180, 38, 255])
         }
     ]
@@ -127,3 +128,6 @@ def removeAllButOneColor(img, color):
             if mask_img[y][x][0] != 0 or mask_img[y][x][1] != 0 or mask_img[y][x][2] != 0:
                 mask_img[y][x] = RBG_PURE_COLOR[color]
     return mask_img
+
+def calcArea(triangle):
+    return abs((triangle[0][0] * (triangle[1][1] - triangle[2][1])) + (triangle[1][0] * (triangle[2][1] - triangle[0][1])) + (triangle[2][0] * (triangle[0][1] - triangle[1][1]))) / 2
