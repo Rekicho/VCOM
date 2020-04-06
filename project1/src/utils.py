@@ -17,6 +17,12 @@ RBG_PURE_COLOR = {
     "yellow": [0, 255, 255]
 }
 
+HSV_PURE_COLOR = {
+    "red": [0,100,255],
+    "blue": [255,0,0],
+    "yellow": [0, 255, 255]
+}
+
 HSV_RANGES = {
     # red is a major color
     'red': [

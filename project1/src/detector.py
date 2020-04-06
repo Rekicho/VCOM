@@ -43,7 +43,6 @@ class Detector:
         img = cv2.dilate(img,kernel2,iterations = 1)
         self.print2(img)
         
-        
         for y in range(0, h):
             for x in range(0, w):
                 if img[y][x][0] == RBG_PURE_COLOR[color][0] and img[y][x][1] == RBG_PURE_COLOR[color][1] and img[y][x][2] == RBG_PURE_COLOR[color][2]:
@@ -54,7 +53,7 @@ class Detector:
                     x_offset = y_offset = 100                   
                     frame = np.zeros([h + y_offset*2, w + x_offset*2,3],dtype=np.uint8)
                     frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
-                    kernel = np.ones((50,50),np.uint8)
+                    kernel = np.ones((100,100),np.uint8)
                     frame = cv2.dilate(frame,kernel,iterations = 1)
                     # self.print2(frame)
                     frame = cv2.erode(frame,kernel,iterations = 1)
@@ -87,8 +86,10 @@ class Detector:
         self.print2(self.processedImg)
 
     def detectCircles(self, color):
-        img = self.img
+        img = self.processedImg
         img = removeAllButOneColor(img,color)
+        print("isolating " + color)
+        # self.print2(img)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         low=np.array([1])
         high=np.array([255])
@@ -97,7 +98,8 @@ class Detector:
         kernel = np.ones((15,15),np.uint8)
         gray = cv2.dilate(gray,kernel,iterations = 1)
         gray = cv2.erode(gray,kernel,iterations = 1)
-        circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100, param1=50, param2=30, minRadius=50, maxRadius=250)
+        # self.print2(gray)
+        circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100, param1=50, param2=100, minRadius=0, maxRadius=0)
         centers = []
         if circles is not None:
             circles = np.uint16(np.around(circles))
@@ -115,7 +117,7 @@ class Detector:
         return circles, gray, centers
 
     def detectTriangles(self):
-        img = self.img
+        img = self.redProcessed #self.img
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 127, 255, 1)
         contours, h = cv2.findContours(thresh, 1, 2)
@@ -123,6 +125,7 @@ class Detector:
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
             if len(approx) == 3:
+                print("found a triangle")
                 triangles.append([cnt])
         trianglesObj = {
             "info": contours,
@@ -130,6 +133,7 @@ class Detector:
             "coordText": triangles,
             "text": "T"
         }
+        # print(trianglesObj)
         self.detected["t"] = trianglesObj
         return contours, thresh, triangles
 
