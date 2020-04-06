@@ -10,18 +10,21 @@ from utils import *
 from detector import Detector
 from printer import Printer
 from reader import Reader
+from preprocessor import Preprocessor
 
 # Read the image
 reader = Reader()
 img = reader.getImage()
 
+pre = Preprocessor(img)
+img = pre.getProcessed()
 # Detect Point of Interests (POI)
 det = Detector(img)
 # det.detectCircles("red")
 # det.detectCircles("blue")
 # det.isolateEachElementOfColor("red")
 # det.isolateEachElementOfColor("blue")
-det.detectTriangles("white")
+det.detectTriangles("red")
 # det.detectRectangles()
 # det.printProcess()
 # det.process()

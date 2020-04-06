@@ -27,57 +27,6 @@ class Detector:
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-    def isolateEachElementOfColor(self, color):
-        img = removeAllButOneColor(self.img, color)
-        self.print2(img)
-        everySign = []
-        h = img.shape[0]
-        w = img.shape[1]
-
-        kernel1 = np.ones((5,5),np.uint8)
-        img = cv2.dilate(img,kernel1,iterations = 1)
-        # self.print2(img)
-        img = cv2.erode(img,kernel1,iterations = 1)
-        kernel2 = np.ones((5,5),np.uint8)
-        img = cv2.erode(img,kernel2,iterations = 1)
-        img = cv2.dilate(img,kernel2,iterations = 1)
-        self.print2(img)
-        
-        for y in range(0, h):
-            for x in range(0, w):
-                if img[y][x][0] == RBG_PURE_COLOR[color][0] and img[y][x][1] == RBG_PURE_COLOR[color][1] and img[y][x][2] == RBG_PURE_COLOR[color][2]:
-                    temp = img.copy()
-                    cv2.floodFill(temp, None, (x,y),(0,255,255))
-                    temp = removeAllButOneColor(temp, "yellow")
-                    # temp only has one sign at a time!!
-                    x_offset = y_offset = 100                   
-                    frame = np.zeros([h + y_offset*2, w + x_offset*2,3],dtype=np.uint8)
-                    frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
-                    kernel = np.ones((100,100),np.uint8)
-                    frame = cv2.dilate(frame,kernel,iterations = 1)
-                    # self.print2(frame)
-                    frame = cv2.erode(frame,kernel,iterations = 1)
-                    # kernel = np.ones((10,10),np.uint8)
-                    # frame = cv2.erode(frame,kernel,iterations = 1)
-                    # frame = cv2.dilate(frame,kernel,iterations = 1)
-                    singleSign = frame[y_offset:y_offset+h, x_offset:x_offset+w]
-                    everySign.append(singleSign)
-                    cv2.floodFill(img, None, (x,y),(0,0,0))
-        finalImgHSV = np.zeros([h,w,3], dtype=np.uint8)
-        for singleSign in everySign:
-            img = convertToHSV(singleSign)
-            yellow_mask = create_mask(img, ["yellow"])
-            cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=yellow_mask)
-
-        myMask = create_mask(finalImgHSV, ["yellow"])
-        finalImg = convertToRGB(finalImgHSV)
-        finalImg[np.where((finalImg==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
-
-        if color == "red":
-            self.redProcessed = finalImg.copy()
-        else:
-            self.blueProcessed = finalImg.copy()
-
     def process(self):
         # self.print2(self.blueProcessed)
         # self.print2(self.redProcessed)
@@ -121,31 +70,34 @@ class Detector:
         img = removeAllButOneColor(img,color)
         cv2.imshow("White", img)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(gray, 127, 255, 1)
-        contours, h = cv2.findContours(thresh, 1, 2)
+        cv2.imshow("gray", gray)
+        # ret, thresh = cv2.threshold(gray, 127, 255, 1)
+        #cv2.imshow("thresh", thresh)
+        contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
         triangles = []
         centers = []
         for cnt in contours:
-            approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+            approx = cv2.approxPolyDP(cnt, 0.02*cv2.arcLength(cnt, True), True)
+            print("Shapes: " + str(len(approx)))
             if len(approx) == 3:
                 triangle = [(approx[0][0][0],approx[0][0][1]),
                             (approx[1][0][0],approx[1][0][1]),
                             (approx[2][0][0],approx[2][0][1])]
                 center = (int(round((triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3)),
                           int(round((triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3)))
-                if calcArea(triangle) > 100:
+                if calcArea(triangle) > 0:
                     centers.append(center)
                     triangles.append(triangle)
                     # triangles.append([cnt])
         trianglesObj = {
             "info": triangles,
-            "debugImg": thresh,
+            "debugImg": gray,
             "coordText": centers,
             "text": "T"
         }
         # print(trianglesObj)
         self.detected["t"] = trianglesObj
-        return contours, thresh, triangles
+        return contours, gray, triangles
 
     def detectRectangles(self):
         img = self.img
