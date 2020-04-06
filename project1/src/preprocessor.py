@@ -20,7 +20,6 @@ class Preprocessor:
         self.isolateEachElementOfColor('blue')
         temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
         self.processedImg = temp.copy()
-        self.print2(self.processedImg)
 
     def getProcessed(self):
         return self.processedImg

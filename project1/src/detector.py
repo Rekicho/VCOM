@@ -34,10 +34,9 @@ class Detector:
         self.processedImg = temp.copy()
         self.print2(self.processedImg)
 
-    def detectCircles(self, color):
+    def detectHoughCircles(self, color):
         img = self.processedImg
         img = removeAllButOneColor(img,color)
-        print("isolating " + color)
         # self.print2(img)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         low=np.array([1])
@@ -65,30 +64,50 @@ class Detector:
             self.detected["c-" + color] = circlesObj
         return circles, gray, centers
 
+    def detectCircles(self, color):
+        img = self.img
+        img = removeAllButOneColor(img,color)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(gray, 0, 255, 1)
+        contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
+        circles = []
+        centers = []
+        for cnt in contours:
+            approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
+            if len(approx) > 8:
+                print(approx[0][0])
+                centers.append((approx[0][0][0],approx[0][0][1]))
+                circles.append([cnt])
+        circlesObj = {
+            "info": circles,
+            "debugImg": gray,
+            "coordText": centers,
+            "text": "c-" + color
+        }
+        # print(trianglesObj)
+        self.detected["c-" + color] = circlesObj
+        return contours, gray, circles
+
+
     def detectTriangles(self, color):
         img = self.img
         img = removeAllButOneColor(img,color)
-        cv2.imshow("White", img)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        cv2.imshow("gray", gray)
-        # ret, thresh = cv2.threshold(gray, 127, 255, 1)
-        #cv2.imshow("thresh", thresh)
+        ret, thresh = cv2.threshold(gray, 0, 255, 1)
         contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
         triangles = []
         centers = []
         for cnt in contours:
-            approx = cv2.approxPolyDP(cnt, 0.02*cv2.arcLength(cnt, True), True)
-            print("Shapes: " + str(len(approx)))
+            approx = cv2.approxPolyDP(cnt, 0.04*cv2.arcLength(cnt, True), True)
             if len(approx) == 3:
                 triangle = [(approx[0][0][0],approx[0][0][1]),
                             (approx[1][0][0],approx[1][0][1]),
                             (approx[2][0][0],approx[2][0][1])]
                 center = (int(round((triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3)),
                           int(round((triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3)))
-                if calcArea(triangle) > 0:
+                if calcArea(triangle) > 50:
                     centers.append(center)
-                    triangles.append(triangle)
-                    # triangles.append([cnt])
+                    triangles.append([cnt])
         trianglesObj = {
             "info": triangles,
             "debugImg": gray,

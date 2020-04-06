@@ -7,35 +7,32 @@ from pytesseract import Output
 from signDetection import *
 from utils import *
 
-def drawCircles(img, circles):
-    if not(circles is None):
-        for i in circles[0,:]:
-            center = (i[0],i[1])
-            # draw the outer circle
-            cv2.circle(img,center,i[2],(0,255,0),2)
-            # draw the center of the circle
-            cv2.circle(img,center,2,(0,0,255),3)
-    return img
+# def drawCircles(img, circles):
+#     if not(circles is None):
+#         for i in circles[0,:]:
+#             center = (i[0],i[1])
+#             # draw the outer circle
+#             cv2.circle(img,center,i[2],(0,255,0),2)
+#             # draw the center of the circle
+#             cv2.circle(img,center,2,(0,0,255),3)
+#     return img
 
-def drawTriangles(img, triangles):
-    for triangle in triangles:
-        # cv2.drawContours(img, triangle, 0, (0, 255, 0), -1)
-        img = cv2.line(img, triangle[0], triangle[1], (0, 255, 0), 5)
-        img = cv2.line(img, triangle[0], triangle[2], (0, 255, 0), 5)
-        img = cv2.line(img, triangle[1], triangle[2], (0, 255, 0), 5)
-    return img
+# def drawTriangles(img, triangles):
+#     for triangle in triangles:
+#         cv2.drawContours(img, triangle, 0, (0, 255, 0), 6)
+#     return img
 
-def drawRectangles(img, rectangles):
-    for rectangle in rectangles:
-        cv2.drawContours(img, rectangles, 0, (255, 0, 0), -1)
-    return img
+# def drawRectangles(img, rectangles):
+#     for rectangle in rectangles:
+#         cv2.drawContours(img, rectangles, 0, (255, 0, 0), -1)
+#     return img
 
     # Print on top of 'img' all the labels in 'obj'
 def printLabels(img, obj):
     # Constants
     font = cv2.FONT_HERSHEY_SIMPLEX
     fontScale = 1
-    color = (255, 0, 0)
+    color = (0, 255, 0)
     thickness = 2
 
     # Personalized for each shape
@@ -47,12 +44,14 @@ def printLabels(img, obj):
 
 def printShapes(img, obj):
     text = obj["text"]
-    if text == "redC" or text == 'blueC':
-        img = drawCircles(img, obj["info"])
-    elif text == "T":
-        img = drawTriangles(img, obj["info"])
-    elif text == "R":
-        img = drawRectangles(img, obj["info"])
+    for sign in obj["info"]:
+        cv2.drawContours(img, sign, 0, (0, 255, 0), 6)
+    # if text == "redC" or text == 'blueC':
+    #     img = drawCircles(img, obj["info"])
+    # elif text == "T":
+    #     img = drawTriangles(img, obj["info"])
+    # elif text == "R":
+    #     img = drawRectangles(img, obj["info"])
     return img
 
 class Printer:
