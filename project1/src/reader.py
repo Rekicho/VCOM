@@ -1,10 +1,12 @@
 import cv2
 import sys
 import numpy as np
-import pytesseract
-from pytesseract import Output
 
 class Reader:
+    
+    """Reads an image from the user
+    """
+
     def openImage(self, name):
         return cv2.imread(name,cv2.IMREAD_COLOR)
 
