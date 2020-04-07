@@ -129,5 +129,15 @@ def removeAllButOneColor(img, color):
                 mask_img[y][x] = RBG_PURE_COLOR[color]
     return mask_img
 
-def calcArea(triangle):
-    return abs((triangle[0][0] * (triangle[1][1] - triangle[2][1])) + (triangle[1][0] * (triangle[2][1] - triangle[0][1])) + (triangle[2][0] * (triangle[0][1] - triangle[1][1]))) / 2
+def getCenter(shape):
+    center = [ int(sum(x) / len(shape)) for x in zip(*shape) ]
+    return (center[0], center[1])
+
+def calculateArea(shape):
+    soma = 0
+    for i in range(len(shape)):
+        if i == len(shape) - 1:
+            soma += (shape[i][0] * shape[0][1]) - (shape[i][1] * shape[0][0])
+        else:
+            soma += (shape[i][0] * shape[i+1][1]) - (shape[i][1] * shape[i+1][0])
+    return abs(soma) / 2

@@ -5,11 +5,16 @@ from pytesseract import Output
 
 from utils import *
 
+# Percentage of image size signs have to be to be considered
+MINIMUM_SIGN_SIZE = 0.01 
+
 class Detector:
     def __init__(self, img):
         self.img = img
         h = img.shape[0]
         w = img.shape[1]
+        self.minimumSignSize = MINIMUM_SIGN_SIZE * h * w
+        print("Minimum Sign Size: " + str(self.minimumSignSize))
         self.detected = {}
         self.processedImg = np.zeros([h,w,3], dtype=np.uint8)
         self.redProcessed = np.zeros([h,w,3], dtype=np.uint8)
@@ -75,8 +80,14 @@ class Detector:
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
             if len(approx) > 8:
-                centers.append((approx[0][0][0],approx[0][0][1]))
-                circles.append([cnt])
+                circle = []
+                for coords in approx:
+                    circle.append((coords[0][0],coords[0][1]))
+                if calculateArea(circle) >= self.minimumSignSize:
+                    print("Circle: " + str(calculateArea(circle)))
+                    center = getCenter(circle)
+                    centers.append(center)
+                    circles.append([cnt])
         circlesObj = {
             "info": circles,
             "debugImg": gray,
@@ -101,9 +112,9 @@ class Detector:
                 triangle = [(approx[0][0][0],approx[0][0][1]),
                             (approx[1][0][0],approx[1][0][1]),
                             (approx[2][0][0],approx[2][0][1])]
-                center = (int(round((triangle[0][0] + triangle[1][0] + triangle[2][0]) / 3)),
-                          int(round((triangle[0][1] + triangle[1][1] + triangle[2][1]) / 3)))
-                if calcArea(triangle) > 50:
+                if calculateArea(triangle) >= self.minimumSignSize:
+                    print("Triangle: " + str(calculateArea(triangle)))
+                    center = getCenter(triangle)
                     centers.append(center)
                     triangles.append([cnt])
         trianglesObj = {
@@ -126,8 +137,15 @@ class Detector:
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.04*cv2.arcLength(cnt, True), True)
             if len(approx) == 4:
-                centers.append((approx[0][0][0],approx[0][0][1]))
-                rectangles.append([cnt])
+                rectangle = [(approx[0][0][0],approx[0][0][1]),
+                            (approx[1][0][0],approx[1][0][1]),
+                            (approx[2][0][0],approx[2][0][1]),
+                            (approx[3][0][0],approx[3][0][1])]
+                if calculateArea(rectangle) >= self.minimumSignSize:
+                    print("Rectangle: " + str(calculateArea(rectangle)))
+                    center = getCenter(rectangle)
+                    centers.append(center)
+                    rectangles.append([cnt])
         rectanglesObj = {
             "info": rectangles,
             "debugImg": gray,
@@ -148,8 +166,19 @@ class Detector:
         for cnt in contours:
             approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
             if len(approx) == 8:
-                centers.append((approx[0][0][0],approx[0][0][1]))
-                stops.append([cnt])
+                stop = [(approx[0][0][0],approx[0][0][1]),
+                        (approx[1][0][0],approx[1][0][1]),
+                        (approx[2][0][0],approx[2][0][1]),
+                        (approx[3][0][0],approx[3][0][1]),
+                        (approx[4][0][0],approx[4][0][1]),
+                        (approx[5][0][0],approx[5][0][1]),
+                        (approx[6][0][0],approx[6][0][1]),
+                        (approx[7][0][0],approx[7][0][1])]
+                if calculateArea(stop) >= self.minimumSignSize:
+                    print("STOP: " + str(calculateArea(stop)))
+                    center = getCenter(stop)
+                    centers.append(center)
+                    stops.append([cnt])
         stopsObj = {
             "info": stops,
             "debugImg": gray,
