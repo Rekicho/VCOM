@@ -5,7 +5,7 @@ import numpy as np
 from utils import *
 
 # Percentage of image size signs have to be to be considered
-MINIMUM_SIGN_SIZE = 0.01 
+MINIMUM_SIGN_SIZE = 0.001 
 
 class Detector:
     """ Detetor runs shape detection algorithms to find signs in the image and saves it in 'detected'
