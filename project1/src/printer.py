@@ -27,19 +27,27 @@ class Printer:
         # Personalized for each shape
         textToPrint = obj["text"]
         coords = obj["coordText"]
+        print(textToPrint)
+        print("coords: " + str(coords))
         for coord in coords:
-            img = cv2.putText(img, textToPrint, coord, font, fontScale, color, thickness, cv2.LINE_AA)
+            # print(coord[0])
+            if len(coord) > 0:
+                img = cv2.putText(img, textToPrint, coord[0], font, fontScale, color, thickness, cv2.LINE_AA)
         return img
 
     def printShapes(self, img, obj):
         text = obj["text"]
+        #print("==================================")
         for sign in obj["info"]:
-            cv2.drawContours(img, sign, 0, (0, 255, 0), 6)
+            #print(sign)
+            if len(sign) > 0:
+                cv2.drawContours(img, sign[0], 0, (0, 255, 0), 6)
         return img
 
     def printAllIntoImage(self, answer):
         for signType in answer:
             obj = answer[signType]
+            #print(obj)
             self.img = self.printShapes(self.img, obj)
             self.img = self.printLabels(self.img, obj)
         return self.img
