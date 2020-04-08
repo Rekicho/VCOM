@@ -20,30 +20,38 @@ class Detector:
         detected (:obj: type of signal -> information for the signal): The information of the image will be kept in this data structure and can then be exported for further use 
     """
 
-    def __init__(self, img):
+    def __init__(self, img, arrayImg):
+        self.arrays = arrayImg
         self.img = img
         h = img.shape[0]
         w = img.shape[1]
         self.minimumSignSize = MINIMUM_SIGN_SIZE * h * w
         print("Minimum Sign Size: " + str(self.minimumSignSize))
         self.detected = {}
-        self.processedImg = np.zeros([h,w,3], dtype=np.uint8)
-        self.redProcessed = np.zeros([h,w,3], dtype=np.uint8)
-        self.blueProcessed = np.zeros([h,w,3], dtype=np.uint8)
 
     def getDetected(self):
         return self.detected
 
-    def prepareImg(self, color):
-        img = self.img
+    def prepareImg(self, color, img):
         img = removeAllButOneColor(img,color)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         ret, thresh = cv2.threshold(gray, 0, 255, 1)
         contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
-        return gray, ret, thresh, contours, h 
+        return gray, ret, thresh, contours, h
 
     def detectCircles(self, color):
-        gray, ret, thresh, contours, h = self.prepareImg(color)
+        circlesObj = {
+            "info": [],
+            "debugImg": None,
+            "coordText": [],
+            "text": "c-" + color
+        }
+        self.detected["c-" + color] = circlesObj
+        for img in self.arrays[color]:
+            self.detectCirclesInOneImage(color, img)
+
+    def detectCirclesInOneImage(self, color, img):
+        gray, ret, thresh, contours, h = self.prepareImg(color, img)
         circles = []
         centers = []
         for cnt in contours:
@@ -57,18 +65,26 @@ class Detector:
                     center = getCenter(circle)
                     centers.append(center)
                     circles.append([cnt])
-        circlesObj = {
-            "info": circles,
-            "debugImg": gray,
-            "coordText": centers,
-            "text": "c-" + color
-        }
-        self.detected["c-" + color] = circlesObj
+        
+        print("circle: " + str(circles))
+        print("centers: " + str(centers))
+        self.detected["c-" + color]["info"].append(circles)
+        self.detected["c-" + color]["coordText"].append(centers)
         return contours, gray, circles
 
-
     def detectTriangles(self, color):
-        gray, ret, thresh, contours, h = self.prepareImg(color)
+        trianglesObj = {
+            "info": [],
+            "debugImg": None,
+            "coordText": [],
+            "text": "T"
+        }
+        self.detected["t"] = trianglesObj
+        for img in self.arrays[color]:
+            self.detectTrianglesInOneImage(color, img)
+
+    def detectTrianglesInOneImage(self, color, img):
+        gray, ret, thresh, contours, h = self.prepareImg(color, img)
         triangles = []
         centers = []
         for cnt in contours:
@@ -82,17 +98,24 @@ class Detector:
                     center = getCenter(triangle)
                     centers.append(center)
                     triangles.append([cnt])
-        trianglesObj = {
-            "info": triangles,
-            "debugImg": gray,
-            "coordText": centers,
-            "text": "T"
-        }
-        self.detected["t"] = trianglesObj
+
+        self.detected["t"]["info"].append(triangles)
+        self.detected["t"]["coordText"].append(centers)
         return contours, gray, triangles
 
     def detectRectangles(self, color):
-        gray, ret, thresh, contours, h = self.prepareImg(color)
+        rectanglesObj = {
+            "info": [],
+            "debugImg": None,
+            "coordText": [],
+            "text": "r"
+        }
+        self.detected["r"] = rectanglesObj
+        for img in self.arrays[color]:
+            self.detectRectanglesInOneImage(color,img)
+    
+    def detectRectanglesInOneImage(self, color, img):
+        gray, ret, thresh, contours, h = self.prepareImg(color, img)
         rectangles = []
         centers = []
         for cnt in contours:
@@ -107,17 +130,27 @@ class Detector:
                     center = getCenter(rectangle)
                     centers.append(center)
                     rectangles.append([cnt])
-        rectanglesObj = {
-            "info": rectangles,
-            "debugImg": gray,
-            "coordText": centers,
-            "text": "r"
-        }
-        self.detected["r"] = rectanglesObj
+
+        print("rect: " + str(rectangles))
+        print("centers: " + str(centers))
+        self.detected["r"]["info"].append(rectangles)
+        self.detected["r"]["coordText"].append(centers)
         return contours, gray, rectangles
 
     def detectStop(self):
-        gray, ret, thresh, contours, h = self.prepareImg("red")    
+        stopsObj = {
+            "info": [],
+            "debugImg": None,
+            "coordText": [],
+            "text": "STOP"
+        }
+        self.detected["STOP"] = stopsObj
+        for img in self.arrays["red"]:
+            self.detectStopInOneImage(img)
+
+
+    def detectStopInOneImage(self, img):
+        gray, ret, thresh, contours, h = self.prepareImg("red", img)    
         stops = []
         centers = []
         for cnt in contours:
@@ -136,11 +169,6 @@ class Detector:
                     center = getCenter(stop)
                     centers.append(center)
                     stops.append([cnt])
-        stopsObj = {
-            "info": stops,
-            "debugImg": gray,
-            "coordText": centers,
-            "text": "STOP"
-        }
-        self.detected["STOP"] = stopsObj
+        self.detected["STOP"]["info"].append(stops)
+        self.detected["STOP"]["coordText"].append(centers)
         return contours, gray, stops

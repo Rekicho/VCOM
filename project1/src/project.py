@@ -19,9 +19,10 @@ original = img.copy()
 # Preprocess the image
 pre = Preprocessor(img)
 img = pre.getProcessed()
+coloredSigns = pre.getLists()
 
 # Detect image Points of Interest (POI)
-det = Detector(img)
+det = Detector(img, coloredSigns)
 det.detectCircles("red")
 det.detectCircles("blue")
 det.detectTriangles("red")
