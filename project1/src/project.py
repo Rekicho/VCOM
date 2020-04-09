@@ -33,5 +33,5 @@ ans = det.getDetected()
 # Print the Detected POI's into the image
 printer = Printer(original)
 original = printer.printAllIntoImage(ans)
-printer.showAndSave()
+printer.showAndSave('output.png')
 
