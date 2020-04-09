@@ -56,7 +56,7 @@ HSV_RANGES = {
     'Green': [
         {
             'lower': np.array([41, 39, 64]),
-            'upper': np.array([121, 255, 255])
+            'upper': np.array([80, 255, 255])
         }
     ],
     # cyan is a minor color
@@ -120,12 +120,18 @@ def create_mask(hsv_img, colors):
 
     return mask
 
+def print2(img):
+        cv2.imshow("Signs", img)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
+
 # Removes all the colors except for the one given 
 def removeAllButOneColor(img, color):
     img = convertToHSV(img)
-    red_mask = create_mask(img, [color])
-    mask_img = cv2.bitwise_and(img, img, mask=red_mask)
+    colored_mask = create_mask(img, [color])
+    mask_img = cv2.bitwise_and(img, img, mask=colored_mask)
     mask_img = convertToRGB(mask_img)
+    # print2(mask_img)
     h = mask_img.shape[0]
     w = mask_img.shape[1]
     for y in range(0, h):

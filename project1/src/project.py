@@ -21,10 +21,12 @@ coloredSigns = pre.getLists()
 
 # Detect image Points of Interest (POI)
 det = Detector(img, coloredSigns)
-det.detectCircles("Red")
 det.detectCircles("Blue")
-det.detectTriangles("Red")
+det.detectCircles("Red")
 det.detectRectangles("Blue")
+det.detectTriangles("Red")
+
+det.detectRectangles("Yellow")
 det.detectStop()
 ans = det.getDetected()
 

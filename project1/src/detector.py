@@ -41,7 +41,7 @@ class Detector:
     """
     def detectRectangles(self, color):
         rectanglesObj = self.getDefaultObj(color + " Rectangle")
-        self.detected["r"] = rectanglesObj
+        self.detected["r-" + color] = rectanglesObj
         for img in self.arrays[color]:
             self.detectRectanglesInOneImage(color,img)
     """
@@ -157,11 +157,11 @@ class Detector:
                     centers.append(center)
                     rectangles.append([cnt])
                     self.detectedSigns.append({
-                        "name": self.detected["r"]["text"],
+                        "name": self.detected["r-" + color]["text"],
                         "sign": rectangle
                     })
-        self.detected["r"]["info"].append(rectangles)
-        self.detected["r"]["coordText"].append(centers)
+        self.detected["r-" + color]["info"].append(rectangles)
+        self.detected["r-" + color]["coordText"].append(centers)
         return contours, rectangles
 
     """
