@@ -75,9 +75,8 @@ class Detector:
     def prepareImg(self, color, img):
         img = removeAllButOneColor(img,color)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(gray, 0, 255, 1)
-        contours, h = cv2.findContours(gray, cv2.RETR_EXTERNAL,	cv2.CHAIN_APPROX_SIMPLE)
-        return gray, ret, thresh, contours, h
+        contours, _ = cv2.findContours(gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        return contours
   
     """
     Construct and return a default obj
@@ -94,7 +93,7 @@ class Detector:
     Detect all the circles of a color in one image
     """  
     def detectCirclesInOneImage(self, color, img):
-        gray, ret, thresh, contours, h = self.prepareImg(color, img)
+        contours = self.prepareImg(color, img)
         circles = []
         centers = []
         for cnt in contours:
@@ -113,10 +112,13 @@ class Detector:
                     })
         self.detected["c-" + color]["info"].append(circles)
         self.detected["c-" + color]["coordText"].append(centers)
-        return contours, gray, circles
+        return contours, circles
     
+    """
+    Detect all the triangles of a color in one image
+    """  
     def detectTrianglesInOneImage(self, color, img):
-        gray, ret, thresh, contours, h = self.prepareImg(color, img)
+        contours = self.prepareImg(color, img)
         triangles = []
         centers = []
         for cnt in contours:
@@ -135,12 +137,13 @@ class Detector:
                     })
         self.detected["t"]["info"].append(triangles)
         self.detected["t"]["coordText"].append(centers)
-        return contours, gray, triangles
+        return contours, triangles
+
     """
     Detect all the rectangles of a color in one image
     """
     def detectRectanglesInOneImage(self, color, img):
-        gray, ret, thresh, contours, h = self.prepareImg(color, img)
+        contours = self.prepareImg(color, img)
         rectangles = []
         centers = []
         for cnt in contours:
@@ -160,12 +163,13 @@ class Detector:
                     })
         self.detected["r"]["info"].append(rectangles)
         self.detected["r"]["coordText"].append(centers)
-        return contours, gray, rectangles
+        return contours, rectangles
+
     """
     Detect all the stops in one image
     """ 
     def detectStopInOneImage(self, img):
-        gray, ret, thresh, contours, h = self.prepareImg("Red", img)    
+        contours = self.prepareImg("Red", img)    
         stops = []
         centers = []
         for cnt in contours:
@@ -189,4 +193,4 @@ class Detector:
                     })
         self.detected["STOP"]["info"].append(stops)
         self.detected["STOP"]["coordText"].append(centers)
-        return contours, gray, stops
+        return contours, stops
