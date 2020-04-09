@@ -48,8 +48,8 @@ HSV_RANGES = {
     # yellow is a minor color
     'Yellow': [
         {
-            'lower': np.array([21, 39, 64]),
-            'upper': np.array([40, 255, 255])
+            'lower': np.array([25, 200, 100]),
+            'upper': np.array([35, 255, 255])
         }
     ],
     # green is a major color
