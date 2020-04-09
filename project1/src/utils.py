@@ -20,14 +20,16 @@ RBG_PURE_COLOR = {
     "Red": [0,0,255],
     "Blue": [255,0,0],
     "Yellow": [0, 255, 255],
-    "White": [255,255,255]
+    "White": [255,255,255],
+    "Green": [0,255,0]
 }
 
 # HSV pure colors for comparison
 HSV_PURE_COLOR = {
     "Red": [0,100,255],
     "Blue": [255,0,0],
-    "Yellow": [0, 255, 255]
+    "Yellow": [0, 255, 255],
+    "Green": [120,100,100]
 }
 
 # HSV ranges for some possible colors of signs
@@ -54,7 +56,7 @@ HSV_RANGES = {
     'Green': [
         {
             'lower': np.array([41, 39, 64]),
-            'upper': np.array([80, 255, 255])
+            'upper': np.array([121, 255, 255])
         }
     ],
     # cyan is a minor color

@@ -84,7 +84,6 @@ class Detector:
     def getDefaultObj(self, text):
         return {
             "info": [],
-            "debugImg": None,
             "coordText": [],
             "text": text
         }

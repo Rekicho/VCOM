@@ -47,8 +47,8 @@ class Preprocessor:
         h = img.shape[0]
         w = img.shape[1]
         temp = img.copy()
-        cv2.floodFill(temp, None, (x,y),(0,255,255))
-        temp = removeAllButOneColor(temp, "Yellow")
+        cv2.floodFill(temp, None, (x,y),(0,255,0))
+        temp = removeAllButOneColor(temp, "Green")
         x_offset = y_offset = val                   
         frame = np.zeros([h + y_offset*2, w + x_offset*2,3],dtype=np.uint8)
         frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
@@ -97,18 +97,18 @@ class Preprocessor:
         if clean:
             for singleSign in everySign:
                 img = convertToHSV(singleSign)
-                yellow_mask = create_mask(img, ["Yellow"])
-                cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=yellow_mask)
+                green_mask = create_mask(img, ["Green"])
+                cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=green_mask)
 
             finalImg = convertToRGB(finalImgHSV)
-            finalImg[np.where((finalImg==RBG_PURE_COLOR["Yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
+            finalImg[np.where((finalImg==RBG_PURE_COLOR["Green"]).all(axis=2))] = RBG_PURE_COLOR[color]
             if color == "Red":
                 self.redProcessed = finalImg.copy()
             else:
                 self.blueProcessed = finalImg.copy()
         else:
             for i in range(len(everySign)):
-                everySign[i][np.where((everySign[i]==RBG_PURE_COLOR["Yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
+                everySign[i][np.where((everySign[i]==RBG_PURE_COLOR["Green"]).all(axis=2))] = RBG_PURE_COLOR[color]
             if color == "Red":
                 self.redList = everySign
             else:
