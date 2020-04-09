@@ -24,7 +24,7 @@ class Detector:
     Detect all the circles of the image
     """
     def detectCircles(self, color):
-        circlesObj = self.getDefaultObj("c-" + color)
+        circlesObj = self.getDefaultObj(color + " Circle")
         self.detected["c-" + color] = circlesObj
         for img in self.arrays[color]:
             self.detectCirclesInOneImage(color, img)
@@ -32,7 +32,7 @@ class Detector:
     Detect all the triangles of the image
     """ 
     def detectTriangles(self, color):
-        trianglesObj = self.getDefaultObj("t")    
+        trianglesObj = self.getDefaultObj(color + " Triangle")    
         self.detected["t"] = trianglesObj
         for img in self.arrays[color]:
             self.detectTrianglesInOneImage(color, img)
@@ -40,7 +40,7 @@ class Detector:
     Detect all the rectangles of the image
     """
     def detectRectangles(self, color):
-        rectanglesObj = self.getDefaultObj("r")
+        rectanglesObj = self.getDefaultObj(color + " Rectangle")
         self.detected["r"] = rectanglesObj
         for img in self.arrays[color]:
             self.detectRectanglesInOneImage(color,img)
@@ -50,7 +50,7 @@ class Detector:
     def detectStop(self):
         stopsObj = self.getDefaultObj("STOP")
         self.detected["STOP"] = stopsObj
-        for img in self.arrays["red"]:
+        for img in self.arrays["Red"]:
             self.detectStopInOneImage(img)
 
     def __init__(self, img, arrayImg):
@@ -61,9 +61,13 @@ class Detector:
         self.minimumSignSize = MINIMUM_SIGN_SIZE * h * w
         print("Minimum Sign Size: " + str(self.minimumSignSize))
         self.detected = {}
+        self.detectedSigns = []
 
     def getDetected(self):
         return self.detected
+
+    def getDetectedSigns(self):
+        return self.detectedSigns
 
     """
     Prepare the image for detection
@@ -100,16 +104,17 @@ class Detector:
                 for coords in approx:
                     circle.append((coords[0][0],coords[0][1]))
                 if calculateArea(circle) >= self.minimumSignSize:
-                    print("Circle: " + str(calculateArea(circle)))
                     center = getCenter(circle)
                     centers.append(center)
                     circles.append([cnt])
+                    self.detectedSigns.append({
+                        "name": self.detected["c-" + color]["text"],
+                        "sign": circle
+                    })
         self.detected["c-" + color]["info"].append(circles)
         self.detected["c-" + color]["coordText"].append(centers)
         return contours, gray, circles
-    """
-    Detect all the triangles of a color in one image
-    """ 
+    
     def detectTrianglesInOneImage(self, color, img):
         gray, ret, thresh, contours, h = self.prepareImg(color, img)
         triangles = []
@@ -121,10 +126,13 @@ class Detector:
                             (approx[1][0][0],approx[1][0][1]),
                             (approx[2][0][0],approx[2][0][1])]
                 if calculateArea(triangle) >= self.minimumSignSize:
-                    print("Triangle: " + str(calculateArea(triangle)))
                     center = getCenter(triangle)
                     centers.append(center)
                     triangles.append([cnt])
+                    self.detectedSigns.append({
+                        "name": self.detected["t"]["text"],
+                        "sign": triangle
+                    })
         self.detected["t"]["info"].append(triangles)
         self.detected["t"]["coordText"].append(centers)
         return contours, gray, triangles
@@ -143,10 +151,13 @@ class Detector:
                             (approx[2][0][0],approx[2][0][1]),
                             (approx[3][0][0],approx[3][0][1])]
                 if calculateArea(rectangle) >= self.minimumSignSize:
-                    print("Rectangle: " + str(calculateArea(rectangle)))
                     center = getCenter(rectangle)
                     centers.append(center)
                     rectangles.append([cnt])
+                    self.detectedSigns.append({
+                        "name": self.detected["r"]["text"],
+                        "sign": rectangle
+                    })
         self.detected["r"]["info"].append(rectangles)
         self.detected["r"]["coordText"].append(centers)
         return contours, gray, rectangles
@@ -154,7 +165,7 @@ class Detector:
     Detect all the stops in one image
     """ 
     def detectStopInOneImage(self, img):
-        gray, ret, thresh, contours, h = self.prepareImg("red", img)    
+        gray, ret, thresh, contours, h = self.prepareImg("Red", img)    
         stops = []
         centers = []
         for cnt in contours:
@@ -169,10 +180,13 @@ class Detector:
                         (approx[6][0][0],approx[6][0][1]),
                         (approx[7][0][0],approx[7][0][1])]
                 if calculateArea(stop) >= self.minimumSignSize:
-                    print("STOP: " + str(calculateArea(stop)))
                     center = getCenter(stop)
                     centers.append(center)
                     stops.append([cnt])
+                    self.detectedSigns.append({
+                        "name": self.detected["STOP"]["text"],
+                        "sign": stop
+                    })
         self.detected["STOP"]["info"].append(stops)
         self.detected["STOP"]["coordText"].append(centers)
         return contours, gray, stops

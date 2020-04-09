@@ -17,22 +17,23 @@ def convertToRGB(img):
 
 # RBG pure colors for comparison
 RBG_PURE_COLOR = {
-    "red": [0,0,255],
-    "blue": [255,0,0],
-    "yellow": [0, 255, 255],
-    "white": [255,255,255]
+    "Red": [0,0,255],
+    "Blue": [255,0,0],
+    "Yellow": [0, 255, 255],
+    "White": [255,255,255]
 }
 
 # HSV pure colors for comparison
 HSV_PURE_COLOR = {
-    "red": [0,100,255],
-    "blue": [255,0,0],
-    "yellow": [0, 255, 255]
+    "Red": [0,100,255],
+    "Blue": [255,0,0],
+    "Yellow": [0, 255, 255]
 }
 
 # HSV ranges for some possible colors of signs
 HSV_RANGES = {
-    'red': [
+    # red is a major color
+    'Red': [
         {
             'lower': np.array([0, 200, 100]),
             'upper': np.array([5, 255, 255])
@@ -42,37 +43,58 @@ HSV_RANGES = {
             'upper': np.array([180, 255, 255])
         }
     ],
-    'yellow': [
+    # yellow is a minor color
+    'Yellow': [
         {
             'lower': np.array([21, 39, 64]),
             'upper': np.array([40, 255, 255])
         }
     ],
-    'green': [
+    # green is a major color
+    'Green': [
         {
             'lower': np.array([41, 39, 64]),
             'upper': np.array([80, 255, 255])
         }
     ],
-    'blue': [
+    # cyan is a minor color
+    'Cyan': [
+        {
+            'lower': np.array([81, 39, 64]),
+            'upper': np.array([100, 255, 255])
+        }
+    ],
+    # blue is a major color
+    'Blue': [
         {
             'lower': np.array([100, 200, 64]),
             'upper': np.array([141, 255, 255])
         }
     ],
-    'black': [
+    # violet is a minor color
+    'Violet': [
+        {
+            'lower': np.array([141, 39, 64]),
+            'upper': np.array([160, 255, 255])
+        }
+    ],
+    # next are the monochrome ranges
+    # black is all H & S values, but only the lower 25% of V
+    'Black': [
         {
             'lower': np.array([0, 0, 0]),
             'upper': np.array([180, 255, 63])
         }
     ],
-    'gray': [
+    # gray is all H values, lower 15% of S, & between 26-89% of V
+    'Gray': [
         {
             'lower': np.array([0, 0, 64]),
             'upper': np.array([180, 38, 228])
         }
     ],
-    'white': [
+    # white is all H values, lower 15% of S, & upper 10% of V
+    'White':    [
         {
             'lower': np.array([0, 0, 150]),
             'upper': np.array([180, 38, 255])

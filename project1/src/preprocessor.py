@@ -18,8 +18,8 @@ class Preprocessor:
     """
     def getLists(self):
         return {
-            "blue": self.blueList,
-            "red": self.redList
+            "Blue": self.blueList,
+            "Red": self.redList
         }
 
     """
@@ -48,7 +48,7 @@ class Preprocessor:
         w = img.shape[1]
         temp = img.copy()
         cv2.floodFill(temp, None, (x,y),(0,255,255))
-        temp = removeAllButOneColor(temp, "yellow")
+        temp = removeAllButOneColor(temp, "Yellow")
         x_offset = y_offset = val                   
         frame = np.zeros([h + y_offset*2, w + x_offset*2,3],dtype=np.uint8)
         frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
@@ -97,19 +97,19 @@ class Preprocessor:
         if clean:
             for singleSign in everySign:
                 img = convertToHSV(singleSign)
-                yellow_mask = create_mask(img, ["yellow"])
+                yellow_mask = create_mask(img, ["Yellow"])
                 cv2.bitwise_or(finalImgHSV, img, finalImgHSV, mask=yellow_mask)
 
             finalImg = convertToRGB(finalImgHSV)
-            finalImg[np.where((finalImg==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
-            if color == "red":
+            finalImg[np.where((finalImg==RBG_PURE_COLOR["Yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
+            if color == "Red":
                 self.redProcessed = finalImg.copy()
             else:
                 self.blueProcessed = finalImg.copy()
         else:
             for i in range(len(everySign)):
-                everySign[i][np.where((everySign[i]==RBG_PURE_COLOR["yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
-            if color == "red":
+                everySign[i][np.where((everySign[i]==RBG_PURE_COLOR["Yellow"]).all(axis=2))] = RBG_PURE_COLOR[color]
+            if color == "Red":
                 self.redList = everySign
             else:
                 self.blueList = everySign
@@ -124,13 +124,13 @@ class Preprocessor:
         self.blueList = []
         self.redList = []
         print("[PREPROCESSING] Cleaning the image")
-        self.processElements('red')
-        self.processElements('blue')
+        self.processElements('Red')
+        self.processElements('Blue')
         temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
         self.processedImg = temp.copy()
         print("[PREPROCESSING] Increasing quality of signs")
-        self.processElements('red', False)
-        self.processElements('blue', False)
+        self.processElements('Red', False)
+        self.processElements('Blue', False)
 
     """
     Displays the images in the array for debugging purposes

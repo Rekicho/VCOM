@@ -1,8 +1,6 @@
 import cv2
 import sys
 import numpy as np
-import pytesseract
-from pytesseract import Output
 
 # Local imports
 from utils import *
@@ -23,15 +21,16 @@ coloredSigns = pre.getLists()
 
 # Detect image Points of Interest (POI)
 det = Detector(img, coloredSigns)
-det.detectCircles("red")
-det.detectCircles("blue")
-det.detectTriangles("red")
-det.detectRectangles("blue")
+det.detectCircles("Red")
+det.detectCircles("Blue")
+det.detectTriangles("Red")
+det.detectRectangles("Blue")
 det.detectStop()
 ans = det.getDetected()
 
 # Print the Detected POI's into the image
 printer = Printer(original)
+printer.printToSTDOUT(det.getDetectedSigns())
 original = printer.printAllIntoImage(ans)
 printer.showAndSave('output.png')
 
