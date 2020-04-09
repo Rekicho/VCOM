@@ -3,12 +3,19 @@ import numpy as np
 
 FPS = 60
 
+"""
+Convert the image from RGB to HSV
+"""
 def convertToHSV(img):
     return cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
+"""
+Convert the image from HSV to RGB
+"""
 def convertToRGB(img):
     return cv2.cvtColor(img, cv2.COLOR_HSV2BGR)
 
+# RBG pure colors for comparison
 RBG_PURE_COLOR = {
     "Red": [0,0,255],
     "Blue": [255,0,0],
@@ -16,12 +23,14 @@ RBG_PURE_COLOR = {
     "White": [255,255,255]
 }
 
+# HSV pure colors for comparison
 HSV_PURE_COLOR = {
     "Red": [0,100,255],
     "Blue": [255,0,0],
     "Yellow": [0, 255, 255]
 }
 
+# HSV ranges for some possible colors of signs
 HSV_RANGES = {
     # red is a major color
     'Red': [
@@ -85,7 +94,7 @@ HSV_RANGES = {
         }
     ],
     # white is all H values, lower 15% of S, & upper 10% of V
-    'White': [
+    'White':    [
         {
             'lower': np.array([0, 0, 150]),
             'upper': np.array([180, 38, 255])
@@ -93,17 +102,14 @@ HSV_RANGES = {
     ]
 }
 
+"""
+Creates a binary mask from HSV image using given colors.
+"""
 def create_mask(hsv_img, colors):
-    """
-    Creates a binary mask from HSV image using given colors.
-    """
-
-    # noinspection PyUnresolvedReferences
     mask = np.zeros((hsv_img.shape[0], hsv_img.shape[1]), dtype=np.uint8)
 
     for color in colors:
         for color_range in HSV_RANGES[color]:
-            # noinspection PyUnresolvedReferences
             mask += cv2.inRange(
                 hsv_img,
                 color_range['lower'],
@@ -126,10 +132,12 @@ def removeAllButOneColor(img, color):
                 mask_img[y][x] = RBG_PURE_COLOR[color]
     return mask_img
 
+# Finds center of shape
 def getCenter(shape):
     center = [ int(sum(x) / len(shape)) for x in zip(*shape) ]
     return (center[0], center[1])
 
+# Calculates the area of a shape
 def calculateArea(shape):
     soma = 0
     for i in range(len(shape)):

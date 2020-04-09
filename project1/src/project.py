@@ -32,5 +32,5 @@ ans = det.getDetected()
 printer = Printer(original)
 printer.printToSTDOUT(det.getDetectedSigns())
 original = printer.printAllIntoImage(ans)
-printer.showAndSave()
+printer.showAndSave('output.png')
 
