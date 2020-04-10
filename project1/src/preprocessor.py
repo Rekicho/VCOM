@@ -48,11 +48,8 @@ class Preprocessor:
         h = img.shape[0]
         w = img.shape[1]
         temp = img.copy()
-        #self.print2(temp)
         cv2.floodFill(temp, None, (x,y),(0,255,0))
-        #self.print2(temp)
         temp = removeAllButOneColor(temp, "Green")
-        #self.print2(temp)
         x_offset = y_offset = val                   
         frame = np.zeros([h + y_offset*2, w + x_offset*2,3],dtype=np.uint8)
         frame[y_offset:y_offset+temp.shape[0], x_offset:x_offset+temp.shape[1]] = temp
@@ -77,7 +74,6 @@ class Preprocessor:
         w = img.shape[1]
         if clean:
             img = self.cleanImage(img)
-            #self.print2(img)
             val = 100 # Smaller value to deal with the noise
         else:
             val = 300 # Bigger value to fill the signs properly
@@ -86,12 +82,9 @@ class Preprocessor:
         for y in range(0, h):
             for x in range(0, w):
                 if img[y][x][0] == RBG_PURE_COLOR[color][0] and img[y][x][1] == RBG_PURE_COLOR[color][1] and img[y][x][2] == RBG_PURE_COLOR[color][2]:
-                    #self.print2(img)
                     singleSign = self.processSingleSign(img, val, x, y)
-                    #self.print2(singleSign)
                     everySign.append(singleSign)
                     cv2.floodFill(img, None, (x,y),(0,0,0))
-                    #self.print2(img)
         # Save computed results 
         self.saveResuts(clean, img, everySign, color)
         
@@ -138,11 +131,8 @@ class Preprocessor:
         self.yellowList = []
         print("[PREPROCESSING] Cleaning the image")
         self.processElements('Red')
-        #self.print2(self.redProcessed)
         self.processElements('Blue')
-        #self.print2(self.blueProcessed)
         self.processElements('Yellow')
-        #self.print2(self.yellowProcessed)
         temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
         temp = cv2.bitwise_or(temp, self.yellowProcessed)
         self.processedImg = temp.copy()
@@ -151,7 +141,6 @@ class Preprocessor:
         self.processElements('Red', False)
         self.processElements('Blue', False)
         self.processElements('Yellow', False)
-        # self.printArray(self.blueList)
 
     """
     Displays the images in the array for debugging purposes
