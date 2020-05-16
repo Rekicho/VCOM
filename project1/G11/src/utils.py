@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 
-FPS = 60
-
 """
 Convert the image from RGB to HSV
 """

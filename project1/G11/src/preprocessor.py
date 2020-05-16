@@ -136,7 +136,6 @@ class Preprocessor:
         temp = cv2.bitwise_or(self.blueProcessed, self.redProcessed)
         temp = cv2.bitwise_or(temp, self.yellowProcessed)
         self.processedImg = temp.copy()
-        self.print2(self.processedImg)
         print("[PREPROCESSING] Increasing quality of signs")
         self.processElements('Red', False)
         self.processElements('Blue', False)
