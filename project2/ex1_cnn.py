@@ -25,8 +25,8 @@ train_data_dir = 'data/train/'
 validation_data_dir = 'data/test/'
 nb_train_samples = 900
 nb_validation_samples = 379
-epochs = 5
-batch_size = 16
+epochs = 1
+batch_size = 1
 
 # build the VGG16 network
 model = applications.VGG16(weights='imagenet', include_top=False,
@@ -41,7 +41,7 @@ top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
 top_model.add(Dense(256, activation='relu'))
 top_model.add(Dropout(0.5))
-top_model.add(Dense(1, activation='sigmoid'))
+top_model.add(Dense(2, activation='sigmoid'))
 
 # note that it is necessary to start with a fully-trained
 # classifier, including the top classifier,
@@ -77,13 +77,13 @@ train_generator = train_datagen.flow_from_directory(
     train_data_dir,
     target_size=(img_height, img_width),
     batch_size=batch_size,
-    class_mode='binary')
+    class_mode='categorical')
 
 validation_generator = test_datagen.flow_from_directory(
     validation_data_dir,
     target_size=(img_height, img_width),
     batch_size=batch_size,
-    class_mode='binary')
+    class_mode='categorical')
 
 class_weights = class_weight.compute_class_weight(
         'balanced',
@@ -105,16 +105,17 @@ model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=nb_validation_samples // batch_size,
-    callbacks=[best_model_VA,best_model_VL],
-    class_weight=class_weights)
+    callbacks=[best_model_VA,best_model_VL]
+    ,class_weight=class_weights)
 
-Y_pred = model.predict_generator(validation_generator, nb_validation_samples // batch_size+1)
+Y_pred = model.predict_generator(validation_generator, nb_validation_samples // batch_size)
 y_pred = np.argmax(Y_pred, axis=1)
 print('Confusion Matrix')
 print(confusion_matrix(validation_generator.classes, y_pred))
 print('Classification Report')
 target_names = ['Benign', 'Malign']
 print(classification_report(validation_generator.classes, y_pred, target_names=target_names))
+print(y_pred)
 
 print('saving model...')
 model.save('ex1_model.h5')
