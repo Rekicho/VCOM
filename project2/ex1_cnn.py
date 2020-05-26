@@ -1,9 +1,6 @@
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+# Disable GPU
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from keras.models import Model
 from keras import applications
@@ -13,6 +10,8 @@ from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import sys
+import numpy as np
+from sklearn.metrics import classification_report, confusion_matrix
 
 
 # path to the model weights files.
@@ -25,7 +24,7 @@ train_data_dir = 'data/train/'
 validation_data_dir = 'data/test/'
 nb_train_samples = 900
 nb_validation_samples = 379
-epochs = 20
+epochs = 1
 batch_size = 2
 
 # build the VGG16 network
@@ -94,10 +93,18 @@ best_model_VL = ModelCheckpoint('BM_VL_ex1_model',monitor='val_loss',
 
 model.fit_generator(
     train_generator,
-    samples_per_epoch=nb_train_samples,
-    nb_epoch=epochs,
+    steps_per_epoch=nb_train_samples // batch_size,
+    epochs=epochs,
     validation_data=validation_generator,
-    nb_val_samples=nb_validation_samples, callbacks=[best_model_VA,best_model_VL])
+    validation_steps=nb_validation_samples // batch_size, callbacks=[best_model_VA,best_model_VL])
+
+Y_pred = model.predict_generator(validation_generator, nb_validation_samples // batch_size+1)
+y_pred = np.argmax(Y_pred, axis=1)
+print('Confusion Matrix')
+print(confusion_matrix(validation_generator.classes, y_pred))
+print('Classification Report')
+target_names = ['Benign', 'Malign']
+print(classification_report(validation_generator.classes, y_pred, target_names=target_names))
 
 print('saving model...')
 model.save('ex1_model.h5')
