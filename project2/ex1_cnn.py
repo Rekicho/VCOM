@@ -12,6 +12,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 import sys
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.utils import class_weight
 
 
 # path to the model weights files.
@@ -24,8 +25,8 @@ train_data_dir = 'data/train/'
 validation_data_dir = 'data/test/'
 nb_train_samples = 900
 nb_validation_samples = 379
-epochs = 1
-batch_size = 2
+epochs = 5
+batch_size = 16
 
 # build the VGG16 network
 model = applications.VGG16(weights='imagenet', include_top=False,
@@ -84,6 +85,13 @@ validation_generator = test_datagen.flow_from_directory(
     batch_size=batch_size,
     class_mode='binary')
 
+class_weights = class_weight.compute_class_weight(
+        'balanced',
+        np.unique(train_generator.classes), 
+        train_generator.classes)
+
+print(class_weights)
+
 # fine-tune the model
 best_model_VA = ModelCheckpoint('BM_VA_ex1_model',monitor='val_acc',
                                 mode = 'max', verbose=1, save_best_only=True)
@@ -96,7 +104,9 @@ model.fit_generator(
     steps_per_epoch=nb_train_samples // batch_size,
     epochs=epochs,
     validation_data=validation_generator,
-    validation_steps=nb_validation_samples // batch_size, callbacks=[best_model_VA,best_model_VL])
+    validation_steps=nb_validation_samples // batch_size,
+    callbacks=[best_model_VA,best_model_VL],
+    class_weight=class_weights)
 
 Y_pred = model.predict_generator(validation_generator, nb_validation_samples // batch_size+1)
 y_pred = np.argmax(Y_pred, axis=1)
