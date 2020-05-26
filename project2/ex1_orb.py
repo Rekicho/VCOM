@@ -50,14 +50,14 @@ def generateModel(dataset):
 
     im_features = generateImFeatures(dataset)
 
-    clf = LinearSVC(max_iter=10000)
+    clf = LinearSVC(max_iter=1000000)
     clf.fit(im_features, maligns)
 
     return clf
     
 
-train = loadFeatures('data/train')
-test = loadFeatures('data/test')
+train = loadFeatures('dataORB/train')
+test = loadFeatures('dataORB/test')
 maligns = []
 
 clf = generateModel(train)
