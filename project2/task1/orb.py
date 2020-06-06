@@ -4,6 +4,10 @@ import numpy as np
 from scipy.cluster.vq import kmeans, vq
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
+from sklearn.metrics import confusion_matrix
+from joblib import dump, load
+import os.path
+from os import path
 
 orb = cv.ORB_create()
 
@@ -55,12 +59,19 @@ def generateModel(dataset):
 
     return clf
     
-
-train = loadFeatures('dataORB/train')
+if not path.exists('orb.joblib'):
+    train = loadFeatures('dataORB/train')
+    
 test = loadFeatures('dataORB/test')
 maligns = []
 
-clf = generateModel(train)
+if path.exists('orb.joblib'):
+    clf = load('orb.joblib')
+else:
+    clf = generateModel(train)
+
+dump(clf, 'orb.joblib') 
+
 im_features = generateImFeatures(test)
 
 result = clf.predict(im_features)
@@ -78,6 +89,9 @@ for i in range(len(result)):
         miss+=1
 
 print(result)
-print(hit)
-print(miss)
-print(str(hit * 100 / (hit+miss)) + "%")    
+# print(hit)
+# print(miss)
+print(str(hit * 100 / (hit+miss)) + "%")
+
+cm = confusion_matrix(maligns, result)
+print (cm)
