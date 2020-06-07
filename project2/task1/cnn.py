@@ -11,7 +11,7 @@ from keras.layers import Dropout, Flatten, Dense
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import sys
 import numpy as np
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 
@@ -42,6 +42,8 @@ model = Model(inputs= model.input, outputs= top_model(model.output))
 model.compile(loss='binary_crossentropy',
               optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
               metrics=['accuracy'])
+
+model.summary()
 
 train_datagen = ImageDataGenerator(
     #rescale=1. / 255,
@@ -115,6 +117,7 @@ print(classification_report(train_generator.classes, x_pred, target_names=target
 print(x_pred)
 
 
+print('Test Accuracy: ' + (str) (100 * accuracy_score(test_generator.classes, y_pred, normalize=True)) + '%')
 print('Test Confusion Matrix')
 print(confusion_matrix(test_generator.classes, y_pred))
 print('Classification Report')

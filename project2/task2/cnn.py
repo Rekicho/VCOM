@@ -11,7 +11,7 @@ from keras.layers import Dropout, Flatten, Dense
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import sys
 import numpy as np
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 
@@ -20,7 +20,7 @@ img_width, img_height = 224, 224
 
 train_data_dir = 'data/train/'
 test_data_dir = 'data/test/'
-epochs = 1
+epochs = 10
 batch_size = 16
 
 model = applications.VGG16(weights='imagenet', include_top=False,
@@ -33,15 +33,17 @@ print('Model loaded.')
 
 top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
-top_model.add(Dense(128, activation='relu'))
+top_model.add(Dense(32, activation='relu'))
 top_model.add(Dropout(0.5))
-top_model.add(Dense(7, activation='sigmoid'))
+top_model.add(Dense(7, activation='softmax'))
 
 model = Model(inputs= model.input, outputs= top_model(model.output))
 
-model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
+model.compile(loss='categorical_crossentropy',
+              optimizer=optimizers.SGD(lr=1e-5, momentum=0.9),
               metrics=['accuracy'])
+
+model.summary()
 
 train_datagen = ImageDataGenerator(
     #rescale=1. / 255,
@@ -102,20 +104,20 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-X_pred = model.predict_generator(train_generator, train_generator.samples // batch_size + 1)
+# X_pred = model.predict_generator(train_generator, train_generator.samples // batch_size + 1)
 Y_pred = model.predict_generator(test_generator, test_generator.samples // batch_size + 1)
-x_pred = np.argmax(X_pred, axis=1)
+# x_pred = np.argmax(X_pred, axis=1)
 y_pred = np.argmax(Y_pred, axis=1)
 
 target_names = ['MEL','NV','BCC','AKIEC','BKL','DF','VASC']
 
-print('Train Confusion Matrix')
-print(confusion_matrix(train_generator.classes, x_pred))
-print('Classification Report')
-print(classification_report(train_generator.classes, x_pred, target_names=target_names))
-print(x_pred)
+# print('Train Confusion Matrix')
+# print(confusion_matrix(train_generator.classes, x_pred))
+# print('Classification Report')
+# print(classification_report(train_generator.classes, x_pred, target_names=target_names))
+# print(x_pred)
 
-
+print('Test Accuracy: ' + (str) (100 * accuracy_score(test_generator.classes, y_pred, normalize=True)) + '%')
 print('Test Confusion Matrix')
 print(confusion_matrix(test_generator.classes, y_pred))
 print('Classification Report')
