@@ -1,6 +1,6 @@
 # Disable GPU
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from keras.models import Model
 from keras import applications
@@ -16,16 +16,16 @@ from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 
 
-img_width, img_height = 224, 224
+img_width, img_height = 512, 512
 
 train_data_dir = 'data/train/'
 test_data_dir = 'data/test/'
-epochs = 1
-batch_size = 16
+epochs = 100
+batch_size = 32
 
 model = applications.VGG16(weights='imagenet', include_top=False,
-                           input_shape=(224, 224, 3))
-
+                           input_shape=(512, 512, 3))
+    
 for layer in model.layers:
     layer.trainable = False
 
@@ -33,14 +33,14 @@ print('Model loaded.')
 
 top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
-top_model.add(Dense(128, activation='relu'))
+top_model.add(Dense(16, activation='relu'))
 top_model.add(Dropout(0.5))
 top_model.add(Dense(2, activation='sigmoid'))
 
 model = Model(inputs= model.input, outputs= top_model(model.output))
 
 model.compile(loss='binary_crossentropy',
-              optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
+              optimizer=optimizers.SGD(lr=1e-7, momentum=0.9),
               metrics=['accuracy'])
 
 train_datagen = ImageDataGenerator(
