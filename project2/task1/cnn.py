@@ -16,15 +16,15 @@ from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 
 
-img_width, img_height = 512, 512
+img_width, img_height = 224, 224
 
-train_data_dir = 'data/train/'
+train_data_dir = 'data/train/balance/'#'data/train/'
 test_data_dir = 'data/test/'
 epochs = 100
-batch_size = 32
+batch_size = 16
 
 model = applications.VGG16(weights='imagenet', include_top=False,
-                           input_shape=(512, 512, 3))
+                           input_shape=(224, 224, 3))
     
 for layer in model.layers:
     layer.trainable = False
