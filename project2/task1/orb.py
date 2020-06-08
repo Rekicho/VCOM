@@ -4,7 +4,7 @@ import numpy as np
 from scipy.cluster.vq import kmeans, vq
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, average_precision_score
 from joblib import dump, load
 import os.path
 from os import path
@@ -95,3 +95,4 @@ print(str(hit * 100 / (hit+miss)) + "%")
 
 cm = confusion_matrix(maligns, result)
 print (cm)
+print("Average Precision Score: " + (str) (average_precision_score(maligns,result)))

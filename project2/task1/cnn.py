@@ -1,27 +1,28 @@
 # Disable GPU
-# import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from keras.models import Model
 from keras import applications
 from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
+from keras import regularizers
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten, Dense
 from keras.callbacks import EarlyStopping, ModelCheckpoint
 import sys
 import numpy as np
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, average_precision_score
 from sklearn.utils import class_weight
 import matplotlib.pyplot as plt
 
 
 img_width, img_height = 224, 224
 
-train_data_dir = 'data/train/balance/'#'data/train/'
+train_data_dir = 'data/train/'
 test_data_dir = 'data/test/'
-epochs = 100
-batch_size = 16
+epochs = 1
+batch_size = 32
 
 model = applications.VGG16(weights='imagenet', include_top=False,
                            input_shape=(224, 224, 3))
@@ -34,6 +35,7 @@ print('Model loaded.')
 top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
 top_model.add(Dense(16, activation='relu'))
+# top_model.add(Dense(16, input_dim=16, kernel_regularizer=regularizers.l2(0.01)))
 top_model.add(Dropout(0.5))
 top_model.add(Dense(2, activation='sigmoid'))
 
@@ -46,9 +48,8 @@ model.compile(loss='binary_crossentropy',
 model.summary()
 
 train_datagen = ImageDataGenerator(
-    #rescale=1. / 255,
-    #shear_range=0.2,
-    #zoom_range=0.2,
+    # shear_range=0.2,
+    # zoom_range=0.2,
     horizontal_flip=True,
     vertical_flip=True,
     validation_split=0.2)
@@ -86,7 +87,8 @@ history = model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size,
-    class_weight=class_weights)
+    class_weight=class_weights,
+    callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
@@ -118,6 +120,7 @@ print(x_pred)
 
 
 print('Test Accuracy: ' + (str) (100 * accuracy_score(test_generator.classes, y_pred, normalize=True)) + '%')
+print('Test Average Precision: ' + (str) (average_precision_score(test_generator.classes, y_pred)) + '%')
 print('Test Confusion Matrix')
 print(confusion_matrix(test_generator.classes, y_pred))
 print('Classification Report')

@@ -20,7 +20,7 @@ img_width, img_height = 224, 224
 
 train_data_dir = 'data/train/'
 test_data_dir = 'data/test/'
-epochs = 10
+epochs = 100
 batch_size = 16
 
 model = applications.VGG16(weights='imagenet', include_top=False,
@@ -33,7 +33,7 @@ print('Model loaded.')
 
 top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
-top_model.add(Dense(32, activation='relu'))
+top_model.add(Dense(256, activation='relu'))
 top_model.add(Dropout(0.5))
 top_model.add(Dense(7, activation='softmax'))
 
@@ -86,7 +86,8 @@ history = model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size,
-    class_weight=class_weights)
+    class_weight=class_weights,
+    callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
