@@ -31,7 +31,7 @@ def generateImFeatures(dataset):
 
     descriptors_float = descriptors.astype(float) 
 
-    k = 200
+    k = 400
     voc, variance = kmeans(descriptors_float, k, 1) 
 
     im_features = np.zeros((len(dataset), k), "float32")
@@ -89,10 +89,8 @@ for i in range(len(result)):
         miss+=1
 
 print(result)
-# print(hit)
-# print(miss)
-print(str(hit * 100 / (hit+miss)) + "%")
+print("Accuracy: " + str(hit * 100 / (hit+miss)) + "%")
 
 cm = confusion_matrix(maligns, result)
 print (cm)
-print("Average Precision Score: " + (str) (average_precision_score(maligns,result)))
+print("Average Precision Score: " + str(average_precision_score(list(map(float,maligns)),list(map(float,result)))))

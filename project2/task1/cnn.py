@@ -1,6 +1,6 @@
 # Disable GPU
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from keras.models import Model
 from keras import applications
@@ -21,7 +21,7 @@ img_width, img_height = 224, 224
 
 train_data_dir = 'data/train/'
 test_data_dir = 'data/test/'
-epochs = 1
+epochs = 100
 batch_size = 32
 
 model = applications.VGG16(weights='imagenet', include_top=False,
@@ -87,8 +87,8 @@ history = model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size,
-    class_weight=class_weights,
-    callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
+    class_weight=class_weights)#,
+    #callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])

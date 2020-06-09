@@ -1,6 +1,6 @@
 # Disable GPU
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 from keras.models import Model
 from keras import applications
@@ -46,7 +46,6 @@ model.compile(loss='categorical_crossentropy',
 model.summary()
 
 train_datagen = ImageDataGenerator(
-    #rescale=1. / 255,
     #shear_range=0.2,
     #zoom_range=0.2,
     horizontal_flip=True,
@@ -86,8 +85,8 @@ history = model.fit_generator(
     epochs=epochs,
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size,
-    class_weight=class_weights,
-    callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
+    class_weight=class_weights)#,
+    # callbacks=[EarlyStopping(monitor='val_accuracy', patience=5)])
 
 plt.plot(history.history['accuracy'])
 plt.plot(history.history['val_accuracy'])
@@ -105,18 +104,18 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-# X_pred = model.predict_generator(train_generator, train_generator.samples // batch_size + 1)
+X_pred = model.predict_generator(train_generator, train_generator.samples // batch_size + 1)
 Y_pred = model.predict_generator(test_generator, test_generator.samples // batch_size + 1)
-# x_pred = np.argmax(X_pred, axis=1)
+x_pred = np.argmax(X_pred, axis=1)
 y_pred = np.argmax(Y_pred, axis=1)
 
 target_names = ['MEL','NV','BCC','AKIEC','BKL','DF','VASC']
 
-# print('Train Confusion Matrix')
-# print(confusion_matrix(train_generator.classes, x_pred))
-# print('Classification Report')
-# print(classification_report(train_generator.classes, x_pred, target_names=target_names))
-# print(x_pred)
+print('Train Confusion Matrix')
+print(confusion_matrix(train_generator.classes, x_pred))
+print('Classification Report')
+print(classification_report(train_generator.classes, x_pred, target_names=target_names))
+print(x_pred)
 
 print('Test Accuracy: ' + (str) (100 * accuracy_score(test_generator.classes, y_pred, normalize=True)) + '%')
 print('Test Confusion Matrix')
