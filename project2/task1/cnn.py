@@ -35,7 +35,6 @@ print('Model loaded.')
 top_model = Sequential()
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
 top_model.add(Dense(16, activation='relu'))
-# top_model.add(Dense(16, input_dim=16, kernel_regularizer=regularizers.l2(0.01)))
 top_model.add(Dropout(0.5))
 top_model.add(Dense(2, activation='sigmoid'))
 
